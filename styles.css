@@ -245,6 +245,14 @@ body {
     color: var(--text);
 }
 
+.calc-header-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.explain-btn,
 .solve-yourself-btn {
     display: flex;
     align-items: center;
@@ -258,13 +266,16 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
+    white-space: nowrap;
 }
 
+.explain-btn:hover,
 .solve-yourself-btn:hover {
     background: var(--primary);
     color: white;
 }
 
+.explain-btn.active,
 .solve-yourself-btn.active {
     background: var(--primary);
     color: white;
@@ -958,8 +969,73 @@ body {
 }
 
 .step-item.current {
-    background: var(--warning);
-    background-opacity: 0.1;
+    background: #fff7ed;
     border-right-color: var(--warning);
-    border-width: 4px;
+    border-right-width: 4px;
+}
+
+/* RTL Support */
+[dir="rtl"] .step-item {
+    border-right: none;
+    border-left: 4px solid var(--success);
+}
+
+[dir="rtl"] .step-item.current {
+    border-right: none;
+    border-left: 4px solid var(--warning);
+    border-left-width: 4px;
+}
+
+[dir="rtl"] .calc-display {
+    text-align: left;
+}
+
+[dir="rtl"] .header-left {
+    order: 3;
+}
+
+[dir="rtl"] .header-right {
+    order: 1;
+}
+
+[dir="rtl"] .header-center {
+    order: 2;
+}
+
+[dir="rtl"] .menu-panel {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+}
+
+[dir="rtl"] .menu-overlay.active .menu-panel {
+    transform: translateX(0);
+}
+
+[dir="rtl"] .history-item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .setup-row {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .training-answer {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .page-header {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .setting-item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .calc-header {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .calc-header-buttons {
+    justify-content: flex-start;
 }

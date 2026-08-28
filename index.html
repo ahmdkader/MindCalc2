@@ -27,7 +27,7 @@
             </div>
             <div class="header-center">
                 <h1 class="logo">MindCalc</h1>
-                <span class="tagline">Calculate it... Understand it</span>
+                <span class="tagline" data-i18n="tagline">Calculate it... Understand it</span>
             </div>
             <div class="header-right">
                 <img src="https://cdn-icons-png.flaticon.com/512/2913/2913465.png" alt="Brain" class="brain-icon">
@@ -38,7 +38,7 @@
         <div class="menu-overlay" id="menuOverlay">
             <div class="menu-panel">
                 <div class="menu-header">
-                    <h2>Menu</h2>
+                    <h2 data-i18n="menu">Menu</h2>
                     <button class="close-btn" id="closeMenu">&times;</button>
                 </div>
                 <nav class="menu-nav">
@@ -47,21 +47,21 @@
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        <span>History</span>
+                        <span data-i18n="history">History</span>
                     </a>
                     <a href="#" class="menu-item" data-page="training">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
-                        <span>Train Yourself</span>
+                        <span data-i18n="trainYourself">Train Yourself</span>
                     </a>
                     <a href="#" class="menu-item" data-page="settings">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                         </svg>
-                        <span>Settings</span>
+                        <span data-i18n="settings">Settings</span>
                     </a>
                 </nav>
             </div>
@@ -70,20 +70,30 @@
         <!-- Main Calculator Page -->
         <main class="main-content" id="calculatorPage">
             <div class="calc-header">
-                <h2 class="page-title">Quick Calculations</h2>
-                <button class="solve-yourself-btn" id="solveYourselfBtn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                    Solve It Yourself
-                </button>
+                <h2 class="page-title" data-i18n="quickCalculations">Quick Calculations</h2>
+                <div class="calc-header-buttons">
+                    <button class="explain-btn" id="explainBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span data-i18n="explainMethod">Explain Method</span>
+                    </button>
+                    <button class="solve-yourself-btn" id="solveYourselfBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span data-i18n="solveItYourself">Solve It Yourself</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Solve Yourself Mode Indicator -->
             <div class="mode-indicator hidden" id="solveModeIndicator">
-                <span>Solve It Yourself Mode - Step <span id="currentStepNum">1</span></span>
-                <button class="exit-mode-btn" id="exitSolveMode">Exit</button>
+                <span><span data-i18n="solveItYourselfMode">Solve It Yourself Mode</span> - <span data-i18n="step">Step</span> <span id="currentStepNum">1</span></span>
+                <button class="exit-mode-btn" id="exitSolveMode" data-i18n="exit">Exit</button>
             </div>
 
             <!-- Calculator Display -->
@@ -94,12 +104,12 @@
 
             <!-- Breakdown Steps Container -->
             <div class="steps-container hidden" id="stepsContainer">
-                <h3 class="steps-title">Step-by-Step Solution</h3>
+                <h3 class="steps-title" data-i18n="stepByStepSolution">Step-by-Step Solution</h3>
                 <div class="steps-list" id="stepsList"></div>
                 <div class="user-step-input hidden" id="userStepInput">
                     <p class="step-instruction" id="stepInstruction"></p>
                     <input type="number" class="step-answer-input" id="stepAnswerInput" placeholder="Your answer">
-                    <button class="check-step-btn" id="checkStepBtn">Check</button>
+                    <button class="check-step-btn" id="checkStepBtn" data-i18n="check">Check</button>
                 </div>
             </div>
 
@@ -140,32 +150,32 @@
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                 </button>
-                <h2 class="page-title">Train Yourself</h2>
+                <h2 class="page-title" data-i18n="trainYourself">Train Yourself</h2>
             </div>
 
             <div class="training-setup" id="trainingSetup">
                 <div class="setup-card">
-                    <h3>Practice Settings</h3>
+                    <h3 data-i18n="practiceSettings">Practice Settings</h3>
                     <div class="setup-row">
-                        <label>Operation:</label>
+                        <label data-i18n="operation">Operation:</label>
                         <select id="trainOperation">
-                            <option value="add">Addition (+)</option>
-                            <option value="subtract">Subtraction (-)</option>
-                            <option value="multiply">Multiplication (×)</option>
-                            <option value="divide">Division (÷)</option>
-                            <option value="mixed">Mixed</option>
+                            <option value="add" data-i18n="addition">Addition (+)</option>
+                            <option value="subtract" data-i18n="subtraction">Subtraction (-)</option>
+                            <option value="multiply" data-i18n="multiplication">Multiplication (×)</option>
+                            <option value="divide" data-i18n="division">Division (÷)</option>
+                            <option value="mixed" data-i18n="mixed">Mixed</option>
                         </select>
                     </div>
                     <div class="setup-row">
-                        <label>Difficulty:</label>
+                        <label data-i18n="difficulty">Difficulty:</label>
                         <select id="trainDifficulty">
-                            <option value="easy">Easy (1-2 digits)</option>
-                            <option value="medium" selected>Medium (2 digits)</option>
-                            <option value="hard">Hard (3 digits)</option>
+                            <option value="easy" data-i18n="easy">Easy (1-2 digits)</option>
+                            <option value="medium" selected data-i18n="medium">Medium (2 digits)</option>
+                            <option value="hard" data-i18n="hard">Hard (3 digits)</option>
                         </select>
                     </div>
                     <div class="setup-row">
-                        <label>Number of Questions:</label>
+                        <label data-i18n="numberOfQuestions">Number of Questions:</label>
                         <select id="trainCount">
                             <option value="5">5</option>
                             <option value="10" selected>10</option>
@@ -174,9 +184,9 @@
                     </div>
                     <div class="setup-row checkbox-row">
                         <input type="checkbox" id="trainSolveYourself">
-                        <label for="trainSolveYourself">Solve step-by-step</label>
+                        <label for="trainSolveYourself" data-i18n="solveStepByStep">Solve step-by-step</label>
                     </div>
-                    <button class="start-training-btn" id="startTraining">Start Training</button>
+                    <button class="start-training-btn" id="startTraining" data-i18n="startTraining">Start Training</button>
                 </div>
             </div>
 
@@ -193,26 +203,26 @@
                     <div class="user-step-input" id="trainUserStepInput">
                         <p class="step-instruction" id="trainStepInstruction"></p>
                         <input type="number" class="step-answer-input" id="trainStepAnswer" placeholder="Your answer">
-                        <button class="check-step-btn" id="trainCheckStep">Check</button>
+                        <button class="check-step-btn" id="trainCheckStep" data-i18n="check">Check</button>
                     </div>
                 </div>
 
                 <div class="training-answer" id="trainingAnswer">
                     <input type="number" class="answer-input" id="trainAnswerInput" placeholder="Your answer">
-                    <button class="submit-answer-btn" id="submitAnswer">Submit</button>
+                    <button class="submit-answer-btn" id="submitAnswer" data-i18n="submit">Submit</button>
                 </div>
 
                 <div class="feedback hidden" id="trainFeedback"></div>
-                <button class="next-question-btn hidden" id="nextQuestion">Next Question</button>
+                <button class="next-question-btn hidden" id="nextQuestion" data-i18n="nextQuestion">Next Question</button>
             </div>
 
             <div class="training-results hidden" id="trainingResults">
                 <div class="results-card">
-                    <h3>Training Complete!</h3>
+                    <h3 data-i18n="trainingComplete">Training Complete!</h3>
                     <div class="score-display" id="scoreDisplay"></div>
                     <div class="stats" id="trainStats"></div>
-                    <button class="restart-training-btn" id="restartTraining">Train Again</button>
-                    <button class="back-home-btn" data-back="calculator">Back to Calculator</button>
+                    <button class="restart-training-btn" id="restartTraining" data-i18n="trainAgain">Train Again</button>
+                    <button class="back-home-btn" data-back="calculator" data-i18n="backToCalculator">Back to Calculator</button>
                 </div>
             </div>
         </main>
@@ -226,7 +236,7 @@
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                 </button>
-                <h2 class="page-title">History</h2>
+                <h2 class="page-title" data-i18n="history">History</h2>
             </div>
             <div class="history-list" id="historyList">
                 <div class="empty-state">
@@ -234,10 +244,10 @@
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
-                    <p>No calculations yet</p>
+                    <p data-i18n="noCalculationsYet">No calculations yet</p>
                 </div>
             </div>
-            <button class="clear-history-btn hidden" id="clearHistory">Clear History</button>
+            <button class="clear-history-btn hidden" id="clearHistory" data-i18n="clearHistory">Clear History</button>
         </main>
 
         <!-- Settings Page -->
@@ -249,13 +259,13 @@
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                 </button>
-                <h2 class="page-title">Settings</h2>
+                <h2 class="page-title" data-i18n="settings">Settings</h2>
             </div>
             <div class="settings-list">
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Dark Mode</span>
-                        <span class="setting-desc">Switch between light and dark theme</span>
+                        <span class="setting-label" data-i18n="darkMode">Dark Mode</span>
+                        <span class="setting-desc" data-i18n="darkModeDesc">Switch between light and dark theme</span>
                     </div>
                     <label class="toggle">
                         <input type="checkbox" id="darkModeToggle">
@@ -264,8 +274,8 @@
                 </div>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Sound Effects</span>
-                        <span class="setting-desc">Play sounds on button press</span>
+                        <span class="setting-label" data-i18n="soundEffects">Sound Effects</span>
+                        <span class="setting-desc" data-i18n="soundEffectsDesc">Play sounds on button press</span>
                     </div>
                     <label class="toggle">
                         <input type="checkbox" id="soundToggle" checked>
@@ -274,8 +284,8 @@
                 </div>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Show Breakdown</span>
-                        <span class="setting-desc">Automatically show step-by-step solution</span>
+                        <span class="setting-label" data-i18n="showBreakdown">Show Breakdown</span>
+                        <span class="setting-desc" data-i18n="showBreakdownDesc">Automatically show step-by-step solution</span>
                     </div>
                     <label class="toggle">
                         <input type="checkbox" id="breakdownToggle" checked>
@@ -284,8 +294,8 @@
                 </div>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <span class="setting-label">Language</span>
-                        <span class="setting-desc">Choose your preferred language</span>
+                        <span class="setting-label" data-i18n="language">Language</span>
+                        <span class="setting-desc" data-i18n="languageDesc">Choose your preferred language</span>
                     </div>
                     <select class="setting-select" id="languageSelect">
                         <option value="en">English</option>

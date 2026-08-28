@@ -14,8 +14,10 @@ const state = {
         language: 'en'
     },
     solveMode: false,
+    explainMode: false,
     currentSteps: [],
     currentStepIndex: 0,
+    lastCalculation: null,
     training: {
         active: false,
         questions: [],
@@ -23,9 +25,179 @@ const state = {
         score: 0,
         solveStepByStep: false,
         currentSteps: [],
-        currentStepIndex: 0
+        currentStepIndex: 0,
+        userAnswers: [],
+        stepAnswers: []
     }
 };
+
+// ==================== Translations ====================
+const translations = {
+    en: {
+        tagline: 'Calculate it... Understand it',
+        menu: 'Menu',
+        history: 'History',
+        trainYourself: 'Train Yourself',
+        settings: 'Settings',
+        quickCalculations: 'Quick Calculations',
+        explainMethod: 'Explain Method',
+        solveItYourself: 'Solve It Yourself',
+        solveItYourselfMode: 'Solve It Yourself Mode',
+        step: 'Step',
+        exit: 'Exit',
+        stepByStepSolution: 'Step-by-Step Solution',
+        check: 'Check',
+        practiceSettings: 'Practice Settings',
+        operation: 'Operation',
+        addition: 'Addition (+)',
+        subtraction: 'Subtraction (-)',
+        multiplication: 'Multiplication (×)',
+        division: 'Division (÷)',
+        mixed: 'Mixed',
+        difficulty: 'Difficulty',
+        easy: 'Easy (1-2 digits)',
+        medium: 'Medium (2 digits)',
+        hard: 'Hard (3 digits)',
+        numberOfQuestions: 'Number of Questions',
+        solveStepByStep: 'Solve step-by-step',
+        startTraining: 'Start Training',
+        submit: 'Submit',
+        nextQuestion: 'Next Question',
+        trainingComplete: 'Training Complete!',
+        trainAgain: 'Train Again',
+        backToCalculator: 'Back to Calculator',
+        noCalculationsYet: 'No calculations yet',
+        clearHistory: 'Clear History',
+        darkMode: 'Dark Mode',
+        darkModeDesc: 'Switch between light and dark theme',
+        soundEffects: 'Sound Effects',
+        soundEffectsDesc: 'Play sounds on button press',
+        showBreakdown: 'Show Breakdown',
+        showBreakdownDesc: 'Automatically show step-by-step solution',
+        language: 'Language',
+        languageDesc: 'Choose your preferred language',
+        correct: 'Correct! Well done!',
+        wrong: 'Wrong! The correct answer is',
+        allStepsCompleted: 'All steps completed! Final answer:',
+        accuracy: 'Accuracy',
+        correctCount: 'Correct',
+        wrongCount: 'Wrong',
+        stepAddRound: 'Add {toRound} to {a} to make it a round number: {a} + {toRound} = ?',
+        stepAddRemaining: 'Now add the remaining {remaining}: {rounded} + {remaining} = ?',
+        stepSubRound: 'Subtract {remainder} from {a} to make it a round number: {a} - {remainder} = ?',
+        stepSubRemaining: 'Now subtract the remaining {remaining}: {rounded} - {remaining} = ?',
+        stepMulTens: 'Multiply {a} by {tens}: {a} × {tens} = ?',
+        stepMulOnes: 'Multiply {a} by {ones}: {a} × {ones} = ?',
+        stepMulAdd: 'Add the partial results: {partial1} + {partial2} = ?',
+        stepDivBreakA: 'Break {a} into easy parts: {part1} + {part2}',
+        stepDivPart1: 'Divide {part1} by {b}: {part1} ÷ {b} = ?',
+        stepDivPart2: 'Divide {part2} by {b}: {part2} ÷ {b} = ?',
+        stepDivAdd: 'Add the partial results: {q1} + {q2} = ?',
+        simpleCalculation: 'Simple calculation: {a} {op} {b} = ?',
+        finalAnswer: 'Final Answer: {a} {op} {b} = ?'
+    },
+    ar: {
+        tagline: 'احسبها... وافهمها',
+        menu: 'القائمة',
+        history: 'السجل',
+        trainYourself: 'تدرب بنفسك',
+        settings: 'الإعدادات',
+        quickCalculations: 'الحسابات السريعة',
+        explainMethod: 'اشرح الطريقة',
+        solveItYourself: 'حلها بنفسك',
+        solveItYourselfMode: 'وضع الحل الذاتي',
+        step: 'الخطوة',
+        exit: 'خروج',
+        stepByStepSolution: 'الحل خطوة بخطوة',
+        check: 'تحقق',
+        practiceSettings: 'إعدادات التدريب',
+        operation: 'العملية',
+        addition: 'الجمع (+)',
+        subtraction: 'الطرح (-)',
+        multiplication: 'الضرب (×)',
+        division: 'القسمة (÷)',
+        mixed: 'مختلط',
+        difficulty: 'المستوى',
+        easy: 'سهل (1-2 رقم)',
+        medium: 'متوسط (2 رقم)',
+        hard: 'صعب (3 أرقام)',
+        numberOfQuestions: 'عدد الأسئلة',
+        solveStepByStep: 'حل خطوة بخطوة',
+        startTraining: 'ابدأ التدريب',
+        submit: 'إرسال',
+        nextQuestion: 'السؤال التالي',
+        trainingComplete: 'اكتمل التدريب!',
+        trainAgain: 'تدرب مرة أخرى',
+        backToCalculator: 'العودة للآلة الحاسبة',
+        noCalculationsYet: 'لا توجد عمليات حتى الآن',
+        clearHistory: 'مسح السجل',
+        darkMode: 'الوضع الليلي',
+        darkModeDesc: 'التبديل بين الوضع الفاتح والداكن',
+        soundEffects: 'المؤثرات الصوتية',
+        soundEffectsDesc: 'تشغيل الأصوات عند الضغط على الأزرار',
+        showBreakdown: 'إظهار التفكيك',
+        showBreakdownDesc: 'إظهار الحل خطوة بخطوة تلقائياً',
+        language: 'اللغة',
+        languageDesc: 'اختر لغتك المفضلة',
+        correct: 'صحيح! أحسنت!',
+        wrong: 'خطأ! الإجابة الصحيحة هي',
+        allStepsCompleted: 'اكتملت جميع الخطوات! الإجابة النهائية:',
+        accuracy: 'الدقة',
+        correctCount: 'صحيح',
+        wrongCount: 'خطأ',
+        stepAddRound: 'أضف {toRound} إلى {a} لتجعلها رقمًا صحيحًا: {a} + {toRound} = ؟',
+        stepAddRemaining: 'الآن أضف الباقي {remaining}: {rounded} + {remaining} = ؟',
+        stepSubRound: 'اطرح {remainder} من {a} لتجعلها رقمًا صحيحًا: {a} - {remainder} = ؟',
+        stepSubRemaining: 'الآن اطرح الباقي {remaining}: {rounded} - {remaining} = ؟',
+        stepMulTens: 'اضرب {a} في {tens}: {a} × {tens} = ؟',
+        stepMulOnes: 'اضرب {a} في {ones}: {a} × {ones} = ؟',
+        stepMulAdd: 'اجمع النتائج الجزئية: {partial1} + {partial2} = ؟',
+        stepDivBreakA: 'قسم {a} إلى أجزاء سهلة: {part1} + {part2}',
+        stepDivPart1: 'اقسم {part1} على {b}: {part1} ÷ {b} = ؟',
+        stepDivPart2: 'اقسم {part2} على {b}: {part2} ÷ {b} = ؟',
+        stepDivAdd: 'اجمع النتائج الجزئية: {q1} + {q2} = ؟',
+        simpleCalculation: 'عملية بسيطة: {a} {op} {b} = ؟',
+        finalAnswer: 'الإجابة النهائية: {a} {op} {b} = ؟'
+    }
+};
+
+function t(key, params = {}) {
+    const lang = state.settings.language;
+    let text = translations[lang]?.[key] || translations['en'][key] || key;
+    Object.entries(params).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+    });
+    return text;
+}
+
+function updateLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (translations[state.settings.language]?.[key]) {
+            el.textContent = t(key);
+        }
+    });
+    
+    // Update HTML dir and lang
+    document.documentElement.lang = state.settings.language;
+    document.documentElement.dir = state.settings.language === 'ar' ? 'rtl' : 'ltr';
+    
+    // Update select options
+    const trainOp = document.getElementById('trainOperation');
+    if (trainOp) {
+        trainOp.options[0].text = t('addition');
+        trainOp.options[1].text = t('subtraction');
+        trainOp.options[2].text = t('multiplication');
+        trainOp.options[3].text = t('division');
+        trainOp.options[4].text = t('mixed');
+    }
+    const trainDiff = document.getElementById('trainDifficulty');
+    if (trainDiff) {
+        trainDiff.options[0].text = t('easy');
+        trainDiff.options[1].text = t('medium');
+        trainDiff.options[2].text = t('hard');
+    }
+}
 
 // ==================== DOM Elements ====================
 const elements = {
@@ -35,6 +207,7 @@ const elements = {
     closeMenu: document.getElementById('closeMenu'),
     themeBtn: document.getElementById('themeBtn'),
     themeIcon: document.getElementById('themeIcon'),
+    explainBtn: document.getElementById('explainBtn'),
     
     // Pages
     calculatorPage: document.getElementById('calculatorPage'),
@@ -94,205 +267,184 @@ const elements = {
 };
 
 // ==================== Sound Effects ====================
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioCtx = null;
+
+function getAudioCtx() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
 
 function playSound(type) {
     if (!state.settings.sound) return;
-    
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    
-    switch(type) {
-        case 'click':
-            oscillator.frequency.value = 800;
-            gainNode.gain.value = 0.1;
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
-            break;
-        case 'success':
-            oscillator.frequency.value = 600;
-            gainNode.gain.value = 0.15;
-            oscillator.start();
-            oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-            oscillator.stop(audioCtx.currentTime + 0.15);
-            break;
-        case 'error':
-            oscillator.frequency.value = 200;
-            gainNode.gain.value = 0.15;
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.2);
-            break;
-    }
+    try {
+        const ctx = getAudioCtx();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        switch(type) {
+            case 'click':
+                oscillator.frequency.value = 800;
+                gainNode.gain.value = 0.1;
+                oscillator.start();
+                oscillator.stop(ctx.currentTime + 0.05);
+                break;
+            case 'success':
+                oscillator.frequency.value = 600;
+                gainNode.gain.value = 0.15;
+                oscillator.start();
+                oscillator.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                oscillator.stop(ctx.currentTime + 0.15);
+                break;
+            case 'error':
+                oscillator.frequency.value = 200;
+                gainNode.gain.value = 0.15;
+                oscillator.start();
+                oscillator.stop(ctx.currentTime + 0.2);
+                break;
+        }
+    } catch(e) {}
 }
 
 // ==================== Math Logic ====================
 
-/**
- * Check if a number is a "round" number (ends in 0)
- */
 function isRoundNumber(n) {
     return n % 10 === 0;
 }
 
-/**
- * Check if breakdown is needed for this operation
- * Simple operations like 90+10 don't need breakdown
- */
 function needsBreakdown(a, b, op) {
     if (op !== 'add' && op !== 'subtract') return true;
     
-    // If both numbers are round (end in 0), no need for breakdown
     if (isRoundNumber(a) && isRoundNumber(b)) return false;
-    
-    // If one number is single digit and the other is round
     if ((a < 10 && isRoundNumber(b)) || (b < 10 && isRoundNumber(a))) return false;
-    
-    // If result is obvious (like 90+10=100)
     if (op === 'add' && isRoundNumber(a + b)) return false;
     
     return true;
 }
 
 /**
- * Generate breakdown steps for addition
- * Example: 48 + 27
- * Step 1: 48 + 2 = 50 (make it round)
- * Step 2: 50 + 25 = 75 (add the remainder)
- * 
- * Fixed logic: Always add to the first number to make it round
+ * Generate breakdown steps WITHOUT answers (for solve-yourself mode)
+ * Each step has: question (what to calculate), answer (correct answer), type
  */
-function generateAdditionBreakdown(a, b) {
+function generateAdditionBreakdown(a, b, withAnswers = false) {
     const steps = [];
     
-    // If first number is already round, just add
     if (isRoundNumber(a)) {
         steps.push({
-            text: `Add the numbers: ${a} + ${b} = ${a + b}`,
-            answer: a + b
+            question: t('simpleCalculation', { a, b, op: '+' }),
+            answer: a + b,
+            display: `${a} + ${b} = ${withAnswers ? a + b : '?'}`
         });
         return steps;
     }
     
-    // Calculate how much to add to make 'a' round
     const remainder = a % 10;
     const toRound = remainder === 0 ? 0 : (10 - remainder);
     
     if (toRound > 0 && toRound <= b) {
-        // Step 1: Make 'a' round
         const roundedA = a + toRound;
         const remainingB = b - toRound;
         
         steps.push({
-            text: `Add ${toRound} to ${a} to make it a round number: ${a} + ${toRound} = ${roundedA}`,
+            question: t('stepAddRound', { toRound, a }),
             answer: roundedA,
-            highlight: `${roundedA}`
+            display: `${a} + ${toRound} = ${withAnswers ? roundedA : '?'}`
         });
         
-        // Step 2: Add the remainder
         if (remainingB > 0) {
             steps.push({
-                text: `Now add the remaining ${remainingB}: ${roundedA} + ${remainingB} = ${roundedA + remainingB}`,
+                question: t('stepAddRemaining', { remaining: remainingB, rounded: roundedA }),
                 answer: roundedA + remainingB,
-                highlight: `${roundedA + remainingB}`
+                display: `${roundedA} + ${remainingB} = ${withAnswers ? roundedA + remainingB : '?'}`
             });
         }
     } else {
-        // If toRound > b, just add directly
         steps.push({
-            text: `Add the numbers: ${a} + ${b} = ${a + b}`,
-            answer: a + b
+            question: t('simpleCalculation', { a, b, op: '+' }),
+            answer: a + b,
+            display: `${a} + ${b} = ${withAnswers ? a + b : '?'}`
         });
     }
     
     return steps;
 }
 
-/**
- * Generate breakdown steps for subtraction
- * Example: 75 - 27
- * Step 1: 75 - 5 = 70 (make it round going down)
- * Step 2: 70 - 22 = 48 (subtract the remainder)
- */
-function generateSubtractionBreakdown(a, b) {
+function generateSubtractionBreakdown(a, b, withAnswers = false) {
     const steps = [];
     
-    // If first number is already round
     if (isRoundNumber(a)) {
         steps.push({
-            text: `Subtract: ${a} - ${b} = ${a - b}`,
-            answer: a - b
+            question: t('simpleCalculation', { a, b, op: '-' }),
+            answer: a - b,
+            display: `${a} - ${b} = ${withAnswers ? a - b : '?'}`
         });
         return steps;
     }
     
-    // Calculate how much to subtract to make 'a' round
     const remainder = a % 10;
     
     if (remainder > 0 && remainder <= b) {
-        // Step 1: Make 'a' round by subtracting remainder
         const roundedA = a - remainder;
         const remainingB = b - remainder;
         
         steps.push({
-            text: `Subtract ${remainder} from ${a} to make it a round number: ${a} - ${remainder} = ${roundedA}`,
+            question: t('stepSubRound', { remainder, a }),
             answer: roundedA,
-            highlight: `${roundedA}`
+            display: `${a} - ${remainder} = ${withAnswers ? roundedA : '?'}`
         });
         
-        // Step 2: Subtract the remainder
         if (remainingB > 0) {
             steps.push({
-                text: `Now subtract the remaining ${remainingB}: ${roundedA} - ${remainingB} = ${roundedA - remainingB}`,
+                question: t('stepSubRemaining', { remaining: remainingB, rounded: roundedA }),
                 answer: roundedA - remainingB,
-                highlight: `${roundedA - remainingB}`
+                display: `${roundedA} - ${remainingB} = ${withAnswers ? roundedA - remainingB : '?'}`
             });
         }
     } else {
         steps.push({
-            text: `Subtract: ${a} - ${b} = ${a - b}`,
-            answer: a - b
+            question: t('simpleCalculation', { a, b, op: '-' }),
+            answer: a - b,
+            display: `${a} - ${b} = ${withAnswers ? a - b : '?'}`
         });
     }
     
     return steps;
 }
 
-/**
- * Generate breakdown steps for multiplication
- */
-function generateMultiplicationBreakdown(a, b) {
+function generateMultiplicationBreakdown(a, b, withAnswers = false) {
     const steps = [];
     
-    // Break down by place value
     const bTens = Math.floor(b / 10) * 10;
     const bOnes = b % 10;
     
     if (bTens > 0) {
-        const partial1 = a * (bTens / 10);
+        const tensVal = bTens / 10;
+        const partial1 = a * tensVal;
         steps.push({
-            text: `Multiply ${a} by ${bTens / 10} tens: ${a} × ${bTens / 10} = ${partial1}, so ${a} × ${bTens} = ${partial1 * 10}`,
-            answer: partial1 * 10,
-            highlight: `${partial1 * 10}`
+            question: t('stepMulTens', { a, tens: tensVal }),
+            answer: partial1,
+            display: `${a} × ${tensVal} = ${withAnswers ? partial1 : '?'}`
         });
     }
     
     if (bOnes > 0) {
         const partial2 = a * bOnes;
         steps.push({
-            text: `Multiply ${a} by ${bOnes}: ${a} × ${bOnes} = ${partial2}`,
+            question: t('stepMulOnes', { a, ones: bOnes }),
             answer: partial2,
-            highlight: `${partial2}`
+            display: `${a} × ${bOnes} = ${withAnswers ? partial2 : '?'}`
         });
         
         if (bTens > 0) {
             const total = (a * bTens) + partial2;
             steps.push({
-                text: `Add the partial results: ${a * bTens} + ${partial2} = ${total}`,
+                question: t('stepMulAdd', { partial1: a * bTens, partial2 }),
                 answer: total,
-                highlight: `${total}`
+                display: `${a * bTens} + ${partial2} = ${withAnswers ? total : '?'}`
             });
         }
     }
@@ -301,53 +453,100 @@ function generateMultiplicationBreakdown(a, b) {
 }
 
 /**
- * Generate breakdown steps for division
+ * CORRECTED Division Breakdown
+ * Example: 91 ÷ 7 = 13
+ * Break 91 into 70 + 21 (both divisible by 7)
+ * 70 ÷ 7 = 10
+ * 21 ÷ 7 = 3
+ * 10 + 3 = 13
  */
-function generateDivisionBreakdown(a, b) {
+function generateDivisionBreakdown(a, b, withAnswers = false) {
     const steps = [];
     const result = Math.floor(a / b);
     const remainder = a % b;
     
-    // Find multiples
-    let current = 0;
-    for (let i = 1; i <= result; i++) {
-        const multiple = b * i;
-        steps.push({
-            text: `${b} × ${i} = ${multiple}`,
-            answer: multiple,
-            highlight: `${multiple}`
-        });
-        current = multiple;
+    // Find "round" parts of 'a' that are divisible by b
+    // Strategy: break 'a' into tens + remainder, where tens is divisible by b
+    
+    // Find the largest multiple of 10 that is divisible by b and <= a
+    let part1 = 0;
+    let part2 = 0;
+    
+    // Try to find a round number (multiple of 10) that is divisible by b
+    for (let i = Math.floor(a / 10) * 10; i >= 0; i -= 10) {
+        if (i % b === 0 && i <= a) {
+            part1 = i;
+            part2 = a - i;
+            break;
+        }
     }
     
-    if (remainder > 0) {
-        steps.push({
-            text: `Remainder: ${a} - ${current} = ${remainder}`,
-            answer: remainder,
-            highlight: `${remainder}`
-        });
+    // If no round number found, try multiples of b
+    if (part1 === 0) {
+        part1 = b * Math.floor(a / b);
+        part2 = a - part1;
+        // If part2 is 0, try a smaller part1
+        if (part2 === 0 && part1 > b) {
+            part1 = b * Math.floor((a / b) / 2);
+            part2 = a - part1;
+        }
     }
+    
+    // If still no good split, use a simple split
+    if (part1 === 0 || part2 === 0) {
+        part1 = b;
+        part2 = a - b;
+    }
+    
+    const q1 = Math.floor(part1 / b);
+    const q2 = Math.floor(part2 / b);
+    
+    // Step 1: Break a into parts
+    steps.push({
+        question: t('stepDivBreakA', { a, part1, part2 }),
+        answer: null, // informational step
+        display: `${a} = ${part1} + ${part2}`,
+        isInfo: true
+    });
+    
+    // Step 2: Divide first part
+    steps.push({
+        question: t('stepDivPart1', { part1, b }),
+        answer: q1,
+        display: `${part1} ÷ ${b} = ${withAnswers ? q1 : '?'}`
+    });
+    
+    // Step 3: Divide second part
+    steps.push({
+        question: t('stepDivPart2', { part2, b }),
+        answer: q2,
+        display: `${part2} ÷ ${b} = ${withAnswers ? q2 : '?'}`
+    });
+    
+    // Step 4: Add the quotients
+    steps.push({
+        question: t('stepDivAdd', { q1, q2 }),
+        answer: result,
+        display: `${q1} + ${q2} = ${withAnswers ? result : '?'}`
+    });
     
     return steps;
 }
 
-/**
- * Generate breakdown steps based on operation
- */
-function generateBreakdown(a, b, op) {
-    // Check if breakdown is needed
+function generateBreakdown(a, b, op, withAnswers = false) {
     if (!needsBreakdown(a, b, op)) {
         return [{
-            text: `Simple calculation: ${a} ${getOpSymbol(op)} ${b} = ${calculate(a, b, op)}`,
-            answer: calculate(a, b, op)
+            question: t('simpleCalculation', { a, b, op: getOpSymbol(op) }),
+            answer: calculate(a, b, op),
+            display: `${a} ${getOpSymbol(op)} ${b} = ${withAnswers ? calculate(a, b, op) : '?'}`
         }];
     }
     
     switch(op) {
-        case 'add': return generateAdditionBreakdown(a, b);
-        case 'subtract': return generateSubtractionBreakdown(a, b);
-        case 'multiply': return generateMultiplicationBreakdown(a, b);
-        case 'divide': return generateDivisionBreakdown(a, b);
+        case 'add': return generateAdditionBreakdown(a, b, withAnswers);
+        case 'subtract': return generateSubtractionBreakdown(a, b, withAnswers);
+        case 'multiply': return generateMultiplicationBreakdown(a, b, withAnswers);
+        case 'divide': return generateDivisionBreakdown(a, b, withAnswers);
         default: return [];
     }
 }
@@ -383,8 +582,11 @@ function clearCalculator() {
     state.currentSteps = [];
     state.currentStepIndex = 0;
     state.solveMode = false;
+    state.explainMode = false;
+    state.lastCalculation = null;
     elements.stepsContainer.classList.add('hidden');
     elements.solveYourselfBtn.classList.remove('active');
+    elements.explainBtn.classList.remove('active');
     elements.solveModeIndicator.classList.add('hidden');
     elements.userStepInput.classList.add('hidden');
     updateDisplay();
@@ -454,12 +656,25 @@ function performCalculation() {
     state.expression = `${state.previousValue} ${getOpSymbol(state.operator)} ${currentValue} =`;
     state.result = result.toString();
     
-    // Generate breakdown
-    const steps = generateBreakdown(state.previousValue, currentValue, state.operator);
+    // Store last calculation for explain/solve modes
+    state.lastCalculation = {
+        a: state.previousValue,
+        b: currentValue,
+        op: state.operator,
+        result: result
+    };
+    
+    // Generate breakdown steps (without answers for solve mode)
+    const steps = generateBreakdown(state.previousValue, currentValue, state.operator, false);
     state.currentSteps = steps;
     
-    if (state.settings.showBreakdown || state.solveMode) {
-        showBreakdown(steps);
+    // Hide steps container by default - only show if explain or solve mode is active
+    elements.stepsContainer.classList.add('hidden');
+    
+    if (state.explainMode) {
+        showExplainBreakdown();
+    } else if (state.solveMode) {
+        showSolveBreakdown();
     }
     
     state.previousValue = null;
@@ -468,35 +683,46 @@ function performCalculation() {
     updateDisplay();
 }
 
-function showBreakdown(steps) {
-    elements.stepsList.innerHTML = '';
+// Show breakdown WITH answers (Explain Method)
+function showExplainBreakdown() {
+    if (!state.lastCalculation) return;
     
-    if (state.solveMode) {
-        // In solve mode, show steps one by one
-        elements.stepsContainer.classList.remove('hidden');
-        elements.userStepInput.classList.remove('hidden');
-        state.currentStepIndex = 0;
-        showNextStep();
-    } else {
-        // Show all steps at once
-        steps.forEach((step, index) => {
-            const stepEl = document.createElement('div');
-            stepEl.className = 'step-item';
-            stepEl.innerHTML = `
-                <div class="step-number">${index + 1}</div>
-                <div class="step-content">${step.text}</div>
-            `;
-            elements.stepsList.appendChild(stepEl);
-        });
-        elements.stepsContainer.classList.remove('hidden');
-        elements.userStepInput.classList.add('hidden');
-    }
+    const { a, b, op } = state.lastCalculation;
+    const steps = generateBreakdown(a, b, op, true);
+    
+    elements.stepsList.innerHTML = '';
+    steps.forEach((step, index) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'step-item';
+        stepEl.innerHTML = `
+            <div class="step-number">${index + 1}</div>
+            <div class="step-content">${step.display}</div>
+        `;
+        elements.stepsList.appendChild(stepEl);
+    });
+    
+    elements.stepsContainer.classList.remove('hidden');
+    elements.userStepInput.classList.add('hidden');
+    document.querySelector('.steps-title').textContent = t('stepByStepSolution');
+}
+
+// Show breakdown WITHOUT answers (Solve It Yourself)
+function showSolveBreakdown() {
+    if (!state.lastCalculation) return;
+    
+    const { a, b, op } = state.lastCalculation;
+    const steps = generateBreakdown(a, b, op, false);
+    state.currentSteps = steps;
+    
+    elements.stepsContainer.classList.remove('hidden');
+    elements.userStepInput.classList.remove('hidden');
+    state.currentStepIndex = 0;
+    showNextStep();
 }
 
 function showNextStep() {
     if (state.currentStepIndex >= state.currentSteps.length) {
-        // All steps completed
-        elements.stepInstruction.textContent = 'All steps completed! Final answer: ' + state.result;
+        elements.stepInstruction.textContent = t('allStepsCompleted') + ' ' + state.result;
         elements.stepAnswerInput.classList.add('hidden');
         elements.checkStepBtn.classList.add('hidden');
         return;
@@ -504,29 +730,67 @@ function showNextStep() {
     
     const step = state.currentSteps[state.currentStepIndex];
     elements.currentStepNum.textContent = state.currentStepIndex + 1;
-    elements.stepInstruction.textContent = step.text;
+    elements.stepInstruction.textContent = step.question;
     elements.stepAnswerInput.value = '';
-    elements.stepAnswerInput.classList.remove('hidden');
-    elements.checkStepBtn.classList.remove('hidden');
-    elements.stepAnswerInput.focus();
     
-    // Show previous steps
+    // Show previous completed steps with their answers
     elements.stepsList.innerHTML = '';
-    for (let i = 0; i <= state.currentStepIndex; i++) {
+    for (let i = 0; i < state.currentStepIndex; i++) {
         const s = state.currentSteps[i];
         const stepEl = document.createElement('div');
-        stepEl.className = 'step-item' + (i < state.currentStepIndex ? ' completed' : ' current');
+        stepEl.className = 'step-item completed';
         stepEl.innerHTML = `
             <div class="step-number">${i + 1}</div>
-            <div class="step-content">${s.text}</div>
+            <div class="step-content">${s.display.replace('?', s.answer)}</div>
         `;
         elements.stepsList.appendChild(stepEl);
     }
+    
+    // Handle info steps (no answer needed)
+    if (step.isInfo) {
+        elements.stepAnswerInput.classList.add('hidden');
+        elements.checkStepBtn.classList.remove('hidden');
+        elements.checkStepBtn.textContent = state.settings.language === 'ar' ? 'التالي' : 'Next';
+        
+        const currentEl = document.createElement('div');
+        currentEl.className = 'step-item current';
+        currentEl.innerHTML = `
+            <div class="step-number">${state.currentStepIndex + 1}</div>
+            <div class="step-content">${step.display}</div>
+        `;
+        elements.stepsList.appendChild(currentEl);
+        return;
+    }
+    
+    // Normal step with answer input
+    elements.stepAnswerInput.classList.remove('hidden');
+    elements.checkStepBtn.classList.remove('hidden');
+    elements.checkStepBtn.textContent = t('check');
+    elements.stepAnswerInput.focus();
+    
+    // Show current step as pending (without answer)
+    const currentEl = document.createElement('div');
+    currentEl.className = 'step-item current';
+    currentEl.innerHTML = `
+        <div class="step-number">${state.currentStepIndex + 1}</div>
+        <div class="step-content">${step.display}</div>
+    `;
+    elements.stepsList.appendChild(currentEl);
 }
 
 function checkStepAnswer() {
+    const step = state.currentSteps[state.currentStepIndex];
+    
+    // Info step - just advance
+    if (step.isInfo) {
+        playSound('click');
+        state.currentStepIndex++;
+        showNextStep();
+        return;
+    }
+    
     const userAnswer = parseFloat(elements.stepAnswerInput.value);
-    const correctAnswer = state.currentSteps[state.currentStepIndex].answer;
+    const correctAnswer = step.answer;
     
     if (userAnswer === correctAnswer) {
         playSound('success');
@@ -538,7 +802,15 @@ function checkStepAnswer() {
         setTimeout(() => {
             elements.stepAnswerInput.style.borderColor = '';
         }, 500);
-        alert('Incorrect! Try again.');
+        // Show feedback instead of alert
+        const feedback = document.createElement('div');
+        feedback.className = 'step-feedback error';
+        feedback.textContent = t('wrong') + ' ' + correctAnswer;
+        feedback.style.cssText = 'color: var(--error); font-weight: 700; margin-top: 8px; text-align: center;';
+        const existing = elements.userStepInput.querySelector('.step-feedback');
+        if (existing) existing.remove();
+        elements.userStepInput.appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
     }
 }
 
@@ -565,7 +837,6 @@ function percent() {
 function generateQuestion(operation, difficulty) {
     let a, b, op;
     
-    // Determine operation
     if (operation === 'mixed') {
         const ops = ['add', 'subtract', 'multiply'];
         op = ops[Math.floor(Math.random() * ops.length)];
@@ -573,7 +844,6 @@ function generateQuestion(operation, difficulty) {
         op = operation;
     }
     
-    // Generate numbers based on difficulty
     switch(difficulty) {
         case 'easy':
             a = Math.floor(Math.random() * 9) + 1;
@@ -589,10 +859,8 @@ function generateQuestion(operation, difficulty) {
             break;
     }
     
-    // Ensure subtraction doesn't go negative
     if (op === 'subtract' && a < b) [a, b] = [b, a];
     
-    // Ensure division is clean
     if (op === 'divide') {
         b = Math.floor(Math.random() * 9) + 2;
         a = b * (Math.floor(Math.random() * 10) + 2);
@@ -618,6 +886,8 @@ function startTrainingSession() {
     state.training.solveStepByStep = solveStepByStep;
     state.training.currentSteps = [];
     state.training.currentStepIndex = 0;
+    state.training.userAnswers = [];
+    state.training.stepAnswers = [];
     
     elements.trainingSetup.classList.add('hidden');
     elements.trainingSession.classList.remove('hidden');
@@ -640,8 +910,7 @@ function showTrainingQuestion() {
     elements.submitAnswer.disabled = false;
     
     if (state.training.solveStepByStep) {
-        // Generate steps
-        state.training.currentSteps = generateBreakdown(q.a, q.b, q.op);
+        state.training.currentSteps = generateBreakdown(q.a, q.b, q.op, false);
         state.training.currentStepIndex = 0;
         elements.trainingSteps.classList.remove('hidden');
         elements.trainAnswerInput.parentElement.classList.add('hidden');
@@ -655,7 +924,6 @@ function showTrainingQuestion() {
 
 function showTrainingStep() {
     if (state.training.currentStepIndex >= state.training.currentSteps.length) {
-        // All steps done, show final answer input
         elements.trainUserStepInput.classList.add('hidden');
         elements.trainAnswerInput.parentElement.classList.remove('hidden');
         elements.trainAnswerInput.focus();
@@ -663,30 +931,70 @@ function showTrainingStep() {
     }
     
     const step = state.training.currentSteps[state.training.currentStepIndex];
-    elements.trainStepInstruction.textContent = step.text;
+    elements.trainStepInstruction.textContent = step.question;
     elements.trainStepAnswer.value = '';
     elements.trainUserStepInput.classList.remove('hidden');
     elements.trainAnswerInput.parentElement.classList.add('hidden');
     
-    // Show previous steps
+    // Show previous completed steps
     elements.trainStepsList.innerHTML = '';
-    for (let i = 0; i <= state.training.currentStepIndex; i++) {
+    for (let i = 0; i < state.training.currentStepIndex; i++) {
         const s = state.training.currentSteps[i];
         const stepEl = document.createElement('div');
-        stepEl.className = 'step-item' + (i < state.training.currentStepIndex ? ' completed' : ' current');
+        stepEl.className = 'step-item completed';
         stepEl.innerHTML = `
             <div class="step-number">${i + 1}</div>
-            <div class="step-content">${s.text}</div>
+            <div class="step-content">${s.display.replace('?', s.answer)}</div>
         `;
         elements.trainStepsList.appendChild(stepEl);
     }
+    
+    // Handle info steps (no answer needed)
+    if (step.isInfo) {
+        elements.trainStepAnswer.classList.add('hidden');
+        elements.trainCheckStep.classList.remove('hidden');
+        elements.trainCheckStep.textContent = state.settings.language === 'ar' ? 'التالي' : 'Next';
+        
+        const currentEl = document.createElement('div');
+        currentEl.className = 'step-item current';
+        currentEl.innerHTML = `
+            <div class="step-number">${state.training.currentStepIndex + 1}</div>
+            <div class="step-content">${step.display}</div>
+        `;
+        elements.trainStepsList.appendChild(currentEl);
+        return;
+    }
+    
+    // Normal step
+    elements.trainStepAnswer.classList.remove('hidden');
+    elements.trainCheckStep.classList.remove('hidden');
+    elements.trainCheckStep.textContent = t('check');
+    
+    // Show current step
+    const currentEl = document.createElement('div');
+    currentEl.className = 'step-item current';
+    currentEl.innerHTML = `
+        <div class="step-number">${state.training.currentStepIndex + 1}</div>
+        <div class="step-content">${step.display}</div>
+    `;
+    elements.trainStepsList.appendChild(currentEl);
     
     elements.trainStepAnswer.focus();
 }
 
 function checkTrainingStep() {
+    const step = state.training.currentSteps[state.training.currentStepIndex];
+    
+    // Info step - just advance
+    if (step.isInfo) {
+        playSound('click');
+        state.training.currentStepIndex++;
+        showTrainingStep();
+        return;
+    }
+    
     const userAnswer = parseFloat(elements.trainStepAnswer.value);
-    const correctAnswer = state.training.currentSteps[state.training.currentStepIndex].answer;
+    const correctAnswer = step.answer;
     
     if (userAnswer === correctAnswer) {
         playSound('success');
@@ -698,7 +1006,15 @@ function checkTrainingStep() {
         setTimeout(() => {
             elements.trainStepAnswer.style.borderColor = '';
         }, 500);
-        alert('Incorrect! Try again.');
+        // Show inline feedback
+        const feedback = document.createElement('div');
+        feedback.className = 'step-feedback error';
+        feedback.textContent = t('wrong') + ' ' + correctAnswer;
+        feedback.style.cssText = 'color: var(--error); font-weight: 700; margin-top: 8px; text-align: center;';
+        const existing = elements.trainUserStepInput.querySelector('.step-feedback');
+        if (existing) existing.remove();
+        elements.trainUserStepInput.appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
     }
 }
 
@@ -709,23 +1025,46 @@ function submitTrainingAnswer() {
     elements.trainAnswerInput.disabled = true;
     elements.submitAnswer.disabled = true;
     
+    // Store user's answer
+    state.training.userAnswers[state.training.currentIndex] = userAnswer;
+    
     if (userAnswer === q.answer) {
         playSound('success');
         state.training.score++;
-        elements.trainFeedback.textContent = 'Correct! Well done!';
-        elements.trainFeedback.className = 'feedback correct';
     } else {
         playSound('error');
-        elements.trainFeedback.textContent = `Wrong! The correct answer is ${q.answer}`;
-        elements.trainFeedback.className = 'feedback wrong';
     }
     
+    // Show breakdown with correct steps regardless of answer
+    const correctSteps = generateBreakdown(q.a, q.b, q.op, true);
+    
+    elements.trainStepsList.innerHTML = '';
+    correctSteps.forEach((step, index) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'step-item';
+        stepEl.innerHTML = `
+            <div class="step-number">${index + 1}</div>
+            <div class="step-content">${step.display}</div>
+        `;
+        elements.trainStepsList.appendChild(stepEl);
+    });
+    elements.trainingSteps.classList.remove('hidden');
+    elements.trainUserStepInput.classList.add('hidden');
+    
+    // Show feedback
+    if (userAnswer === q.answer) {
+        elements.trainFeedback.textContent = t('correct');
+        elements.trainFeedback.className = 'feedback correct';
+    } else {
+        elements.trainFeedback.textContent = `${t('wrong')} ${q.answer}`;
+        elements.trainFeedback.className = 'feedback wrong';
+    }
     elements.trainFeedback.classList.remove('hidden');
     
     if (state.training.currentIndex < state.training.questions.length - 1) {
         elements.nextQuestion.classList.remove('hidden');
     } else {
-        setTimeout(showTrainingResults, 1500);
+        setTimeout(showTrainingResults, 2000);
     }
 }
 
@@ -739,9 +1078,9 @@ function showTrainingResults() {
     
     elements.scoreDisplay.textContent = `${score}/${total}`;
     elements.trainStats.innerHTML = `
-        <div>Accuracy: ${percentage}%</div>
-        <div>Correct: ${score}</div>
-        <div>Wrong: ${total - score}</div>
+        <div>${t('accuracy')}: ${percentage}%</div>
+        <div>${t('correctCount')}: ${score}</div>
+        <div>${t('wrongCount')}: ${total - score}</div>
     `;
 }
 
@@ -755,7 +1094,7 @@ function renderHistory() {
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <p>No calculations yet</p>
+                <p>${t('noCalculationsYet')}</p>
             </div>
         `;
         elements.clearHistory.classList.add('hidden');
@@ -764,7 +1103,7 @@ function renderHistory() {
     
     elements.historyList.innerHTML = state.history.map(item => {
         const date = new Date(item.timestamp);
-        const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const timeStr = date.toLocaleTimeString(state.settings.language === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit' });
         return `
             <div class="history-item">
                 <div>
@@ -784,13 +1123,11 @@ function renderHistory() {
 function showPage(pageName) {
     state.currentPage = pageName;
     
-    // Hide all pages
     elements.calculatorPage.classList.add('hidden');
     elements.trainingPage.classList.add('hidden');
     elements.historyPage.classList.add('hidden');
     elements.settingsPage.classList.add('hidden');
     
-    // Show requested page
     switch(pageName) {
         case 'calculator':
             elements.calculatorPage.classList.remove('hidden');
@@ -816,7 +1153,6 @@ function showPage(pageName) {
 // ==================== Settings ====================
 
 function applySettings() {
-    // Dark mode
     if (state.settings.darkMode) {
         document.documentElement.setAttribute('data-theme', 'dark');
         elements.themeIcon.innerHTML = `
@@ -837,11 +1173,12 @@ function applySettings() {
         `;
     }
     
-    // Update toggles
     elements.darkModeToggle.checked = state.settings.darkMode;
     elements.soundToggle.checked = state.settings.sound;
     elements.breakdownToggle.checked = state.settings.showBreakdown;
     elements.languageSelect.value = state.settings.language;
+    
+    updateLanguage();
     
     localStorage.setItem('mindcalc_settings', JSON.stringify(state.settings));
 }
@@ -911,6 +1248,27 @@ document.querySelectorAll('.key').forEach(key => {
     });
 });
 
+// Explain Method button
+elements.explainBtn.addEventListener('click', () => {
+    playSound('click');
+    state.explainMode = !state.explainMode;
+    
+    if (state.explainMode) {
+        elements.explainBtn.classList.add('active');
+        elements.solveYourselfBtn.classList.remove('active');
+        state.solveMode = false;
+        elements.solveModeIndicator.classList.add('hidden');
+        elements.userStepInput.classList.add('hidden');
+        
+        if (state.lastCalculation) {
+            showExplainBreakdown();
+        }
+    } else {
+        elements.explainBtn.classList.remove('active');
+        elements.stepsContainer.classList.add('hidden');
+    }
+});
+
 // Solve yourself mode
 elements.solveYourselfBtn.addEventListener('click', () => {
     playSound('click');
@@ -918,29 +1276,22 @@ elements.solveYourselfBtn.addEventListener('click', () => {
     
     if (state.solveMode) {
         elements.solveYourselfBtn.classList.add('active');
+        elements.explainBtn.classList.remove('active');
+        state.explainMode = false;
         elements.solveModeIndicator.classList.remove('hidden');
         
-        // If there's a completed calculation, show steps
-        if (state.currentSteps.length > 0) {
-            showBreakdown(state.currentSteps);
+        if (state.lastCalculation) {
+            showSolveBreakdown();
         }
     } else {
         elements.solveYourselfBtn.classList.remove('active');
         elements.solveModeIndicator.classList.add('hidden');
         elements.userStepInput.classList.add('hidden');
         
-        // Show all steps if they exist
-        if (state.currentSteps.length > 0 && state.settings.showBreakdown) {
-            elements.stepsList.innerHTML = '';
-            state.currentSteps.forEach((step, index) => {
-                const stepEl = document.createElement('div');
-                stepEl.className = 'step-item';
-                stepEl.innerHTML = `
-                    <div class="step-number">${index + 1}</div>
-                    <div class="step-content">${step.text}</div>
-                `;
-                elements.stepsList.appendChild(stepEl);
-            });
+        if (state.lastCalculation && state.explainMode) {
+            showExplainBreakdown();
+        } else {
+            elements.stepsContainer.classList.add('hidden');
         }
     }
 });
@@ -951,6 +1302,7 @@ elements.exitSolveMode.addEventListener('click', () => {
     elements.solveYourselfBtn.classList.remove('active');
     elements.solveModeIndicator.classList.add('hidden');
     elements.userStepInput.classList.add('hidden');
+    elements.stepsContainer.classList.add('hidden');
 });
 
 elements.checkStepBtn.addEventListener('click', checkStepAnswer);
@@ -983,7 +1335,7 @@ elements.trainStepAnswer.addEventListener('keypress', (e) => {
 // History
 elements.clearHistory.addEventListener('click', () => {
     playSound('click');
-    if (confirm('Clear all history?')) {
+    if (confirm(state.settings.language === 'ar' ? 'مسح كل السجل؟' : 'Clear all history?')) {
         state.history = [];
         localStorage.removeItem('mindcalc_history');
         renderHistory();
@@ -1009,7 +1361,6 @@ elements.breakdownToggle.addEventListener('change', (e) => {
 elements.languageSelect.addEventListener('change', (e) => {
     state.settings.language = e.target.value;
     applySettings();
-    // Note: Full localization would require more implementation
 });
 
 // Keyboard support
