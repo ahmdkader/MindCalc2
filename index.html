@@ -2,8 +2,16 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4a6cf7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MindCalc">
+    <meta name="description" content="Mental Math Trainer - Calculate it, Understand it">
     <title>MindCalc - Mental Math Trainer</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" href="icons/icon-192x192.png">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -30,7 +38,7 @@
                 <span class="tagline" data-i18n="tagline">Calculate it... Understand it</span>
             </div>
             <div class="header-right">
-                <img src="https://cdn-icons-png.flaticon.com/512/2913/2913465.png" alt="Brain" class="brain-icon">
+                <img src="icons/icon-192x192.png" alt="MindCalc" class="brain-icon">
             </div>
         </header>
 
@@ -56,6 +64,13 @@
                         </svg>
                         <span data-i18n="trainYourself">Train Yourself</span>
                     </a>
+                    <a href="#" class="menu-item" data-page="solveYourself">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span data-i18n="solveItYourself">Solve It Yourself</span>
+                    </a>
                     <a href="#" class="menu-item" data-page="settings">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
@@ -71,29 +86,14 @@
         <main class="main-content" id="calculatorPage">
             <div class="calc-header">
                 <h2 class="page-title" data-i18n="quickCalculations">Quick Calculations</h2>
-                <div class="calc-header-buttons">
-                    <button class="explain-btn" id="explainBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        <span data-i18n="explainMethod">Explain Method</span>
-                    </button>
-                    <button class="solve-yourself-btn" id="solveYourselfBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                        <span data-i18n="solveItYourself">Solve It Yourself</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Solve Yourself Mode Indicator -->
-            <div class="mode-indicator hidden" id="solveModeIndicator">
-                <span><span data-i18n="solveItYourselfMode">Solve It Yourself Mode</span> - <span data-i18n="step">Step</span> <span id="currentStepNum">1</span></span>
-                <button class="exit-mode-btn" id="exitSolveMode" data-i18n="exit">Exit</button>
+                <button class="explain-btn hidden" id="explainBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span data-i18n="explainMethod">Explain Method</span>
+                </button>
             </div>
 
             <!-- Calculator Display -->
@@ -106,11 +106,6 @@
             <div class="steps-container hidden" id="stepsContainer">
                 <h3 class="steps-title" data-i18n="stepByStepSolution">Step-by-Step Solution</h3>
                 <div class="steps-list" id="stepsList"></div>
-                <div class="user-step-input hidden" id="userStepInput">
-                    <p class="step-instruction" id="stepInstruction"></p>
-                    <input type="number" class="step-answer-input" id="stepAnswerInput" placeholder="Your answer">
-                    <button class="check-step-btn" id="checkStepBtn" data-i18n="check">Check</button>
-                </div>
             </div>
 
             <!-- Calculator Keypad -->
@@ -138,6 +133,50 @@
                 <button class="key zero" data-number="0">0</button>
                 <button class="key" data-action="decimal">.</button>
                 <button class="key equals" data-action="equals">=</button>
+            </div>
+        </main>
+
+        <!-- Solve It Yourself Page -->
+        <main class="main-content hidden" id="solveYourselfPage">
+            <div class="solve-yourself-page">
+                <div class="solve-yourself-header">
+                    <button class="back-btn" data-back="calculator">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+                    <h2 data-i18n="solveItYourself">Solve It Yourself</h2>
+                </div>
+
+                <div class="solve-input-section">
+                    <div class="solve-input-row">
+                        <input type="number" id="solveNum1" placeholder="First number">
+                        <select id="solveOp">
+                            <option value="add">+</option>
+                            <option value="subtract">-</option>
+                            <option value="multiply">×</option>
+                            <option value="divide">÷</option>
+                        </select>
+                        <input type="number" id="solveNum2" placeholder="Second number">
+                    </div>
+                    <button class="solve-start-btn" id="solveStartBtn" data-i18n="startSolving">Start Solving</button>
+                </div>
+
+                <div class="mode-indicator hidden" id="solveModeIndicator">
+                    <span><span data-i18n="step">Step</span> <span id="solveStepNum">1</span></span>
+                    <button class="exit-mode-btn" id="solveExitBtn" data-i18n="exit">Exit</button>
+                </div>
+
+                <div class="steps-container hidden" id="solveStepsContainer">
+                    <h3 class="steps-title" data-i18n="stepByStepSolution">Step-by-Step Solution</h3>
+                    <div class="steps-list" id="solveStepsList"></div>
+                    <div class="user-step-input hidden" id="solveUserStepInput">
+                        <p class="step-instruction" id="solveStepInstruction"></p>
+                        <input type="number" class="step-answer-input" id="solveStepAnswerInput" placeholder="Your answer">
+                        <button class="check-step-btn" id="solveCheckStepBtn" data-i18n="check">Check</button>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -207,7 +246,7 @@
                     </div>
                 </div>
 
-                <div class="training-answer" id="trainingAnswer">
+                <div class="training-answer hidden" id="trainingAnswer">
                     <input type="number" class="answer-input" id="trainAnswerInput" placeholder="Your answer">
                     <button class="submit-answer-btn" id="submitAnswer" data-i18n="submit">Submit</button>
                 </div>
@@ -222,7 +261,7 @@
                     <div class="score-display" id="scoreDisplay"></div>
                     <div class="stats" id="trainStats"></div>
                     <button class="restart-training-btn" id="restartTraining" data-i18n="trainAgain">Train Again</button>
-                    <button class="back-home-btn" data-back="calculator" data-i18n="backToCalculator">Back to Calculator</button>
+                    <button class="back-home-btn" data-back="training-setup" data-i18n="backToSettings">Back to Settings</button>
                 </div>
             </div>
         </main>
@@ -304,6 +343,13 @@
                 </div>
             </div>
         </main>
+
+        <!-- Install Prompt -->
+        <div class="install-prompt hidden" id="installPrompt">
+            <span data-i18n="installApp">Install MindCalc on your device?</span>
+            <button class="install-btn" id="installBtn" data-i18n="install">Install</button>
+            <button class="dismiss-install" id="dismissInstall">&times;</button>
+        </div>
     </div>
 
     <script src="app.js"></script>
